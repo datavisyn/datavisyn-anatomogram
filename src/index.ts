@@ -11,6 +11,7 @@ export {default as species} from './data';
 import * as defaultsDeep from 'lodash/defaultsDeep';
 
 export interface IAnatomogramOptions {
+  defaultClass?: string;
   hoverClass?: string;
   selectClass?: string;
 }
@@ -29,7 +30,8 @@ export default class Anatomogram {
 
   private options: IAnatomogramOptions = {
     hoverClass: hoverClass,
-    selectClass: selectClass
+    selectClass: selectClass,
+    defaultClass: hiddenClass
   };
 
   constructor(parent: HTMLElement, private species: Species, options?: IAnatomogramOptions) {
@@ -94,7 +96,7 @@ export default class Anatomogram {
     root.innerHTML = svg;
     this.species.ids.map((id) => {
       const elem = this.findElem(id);
-      elem.classList.add(hiddenClass);
+      elem.classList.add(this.options.defaultClass);
       elem.style.fill = null;
       elem.style.stroke = null;
       elem.addEventListener('mouseenter', () => {

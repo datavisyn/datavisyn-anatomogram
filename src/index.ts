@@ -5,7 +5,28 @@
  */
 
 import './style.scss';
+import species, {Species} from './data';
+export {default as species} from './data';
 
-import species from './data';
+export interface IAnatomogramOptions {
 
-console.log(species);
+}
+
+export default class Anatomogram {
+  private root: HTMLDivElement;
+
+  constructor(parent: HTMLElement, private species: Species, options?: IAnatomogramOptions) {
+    this.root = parent.ownerDocument.createElement('div');
+    parent.appendChild(this.root);
+
+    this.species.load().then((svg) => this.build(this.root, svg));
+  }
+
+  private build(root: HTMLDivElement, svg: string) {
+    root.innerHTML = svg;
+  }
+}
+
+export function create(parent: HTMLElement, species: Species, options?: IAnatomogramOptions) {
+  return new Anatomogram(parent, species, options);
+}

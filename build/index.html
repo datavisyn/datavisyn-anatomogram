@@ -16,13 +16,27 @@
   Anatomogram test
 </h1>
 
+<select id="speciesSelector">
+
+</select>
 <section>
 </section>
 <script src="./anatomogram.js"></script>
 <script>
   (function() {
-    
-  })()
+    const l = datavisyn.anatomogram.species;
+    const s = document.getElementById('speciesSelector');
+    s.innerHTML = l.map((l) => `<option value="${l.name}">${l.name}</option>`);
+    s.addEventListener('change', function() {
+      const i = this.selectedIndex;
+      const parent = document.querySelector('section');
+      while(parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+      const v = new datavisyn.anatomogram.create(parent, l[i]);
+
+    });
+   })()
 </script>
 </body>
 </html>

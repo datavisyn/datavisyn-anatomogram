@@ -8,7 +8,7 @@ import * as species from './resources/json/svgsForSpecies.json';
 import * as idsMap from './resources/json/idsForSvgs.json';
 
 export class Species {
-  constructor(public name: string, private file: string, private ids: string[]) {
+  constructor(public name: string, private file: string, public ids: string[]) {
 
   }
 

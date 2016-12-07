@@ -29,6 +29,13 @@ module.exports = function (env) {
       }, {
         test: /\.scss$/,
         loader: 'style-loader!css-loader!sass-loader'
+      },{test: /\.json$/, loader: 'json-loader'},
+      {
+        test: /\.(png|jpg)$/,
+        loader: 'url-loader',
+        query: {
+          limit: 10000, //inline <= 10kb
+        }
       }]
     },
     resolve: {

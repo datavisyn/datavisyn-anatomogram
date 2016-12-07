@@ -5,24 +5,36 @@
  */
 
 import './style.scss';
-import species, {Species} from './data';
+import {Species} from './data';
+import {cssprefix} from './constants';
 export {default as species} from './data';
 
 export interface IAnatomogramOptions {
 
 }
 
+function randomPrefix() {
+  return `r${Math.random().toString(36).slice(-8)}_`;
+}
+
+function patchIds(svg: string, prefix: string) {
+  return svg.replace(/id="(.*)"/gm, `id="${prefix}$1"`);
+}
+
 export default class Anatomogram {
   private root: HTMLDivElement;
+  private idPrefix = randomPrefix();
 
   constructor(parent: HTMLElement, private species: Species, options?: IAnatomogramOptions) {
     this.root = parent.ownerDocument.createElement('div');
+    this.root.classList.add(cssprefix);
     parent.appendChild(this.root);
-
-    this.species.load().then((svg) => this.build(this.root, svg));
+    //this.shadow = (<any>this.root).createShadowRoot();
+    this.species.load().then((svg) => this.build(this.root, patchIds(svg, this.idPrefix)));
   }
 
-  private build(root: HTMLDivElement, svg: string) {
+
+  private build(root: HTMLElement, svg: string) {
     root.innerHTML = svg;
   }
 }

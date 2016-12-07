@@ -8,6 +8,6 @@
  * css prefix and class of the root element
  * @type {string}
  */
-export const cssprefix = 'datavisyn-scatterplot';
+export const cssprefix = 'datavisyn-anatomogram';
 export const DEBUG = true;
 export const debuglog = DEBUG ? console.log: ()=>undefined;

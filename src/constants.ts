@@ -9,5 +9,8 @@
  * @type {string}
  */
 export const cssprefix = 'datavisyn-anatomogram';
+export const hoverClass = 'datavisyn-hovered';
+export const selectClass = 'datavisyn-selected';
+export const hiddenClass = 'datavisyn-default';
 export const DEBUG = true;
 export const debuglog = DEBUG ? console.log: ()=>undefined;

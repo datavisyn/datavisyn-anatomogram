@@ -6,11 +6,13 @@
 
 import './style.scss';
 import {Species} from './data';
-import {cssprefix} from './constants';
+import {cssprefix, hoverClass, selectClass, hiddenClass} from './constants';
 export {default as species} from './data';
+import * as defaultsDeep from 'lodash/defaultsDeep';
 
 export interface IAnatomogramOptions {
-
+  hoverClass?: string;
+  selectClass?: string;
 }
 
 function randomPrefix() {
@@ -25,7 +27,13 @@ export default class Anatomogram {
   private root: HTMLDivElement;
   private idPrefix = randomPrefix();
 
+  private options: IAnatomogramOptions = {
+    hoverClass: hoverClass,
+    selectClass: selectClass
+  };
+
   constructor(parent: HTMLElement, private species: Species, options?: IAnatomogramOptions) {
+    this.options = defaultsDeep(options || {}, this.options);
     this.root = parent.ownerDocument.createElement('div');
     this.root.classList.add(cssprefix);
     parent.appendChild(this.root);
@@ -33,9 +41,72 @@ export default class Anatomogram {
     this.species.load().then((svg) => this.build(this.root, patchIds(svg, this.idPrefix)));
   }
 
+  private hover(id: string, hover = true) {
+    this.classed(id, this.options.hoverClass, hover);
+    console.log(id, hover);
+  }
+
+  private select(id: string) {
+    this.classed(id, this.options.selectClass, true);
+  }
+
+  style(id: string, attr: string, value?: string) {
+    const elem = this.findElem(id);
+    if (elem && value !== undefined) {
+      elem.style[attr] = value;
+    }
+    return elem && elem.style[attr];
+  }
+
+  classed(id: string, clazz: string, enabled?: boolean) {
+    const elem = this.findElem(id);
+    if (elem && enabled !== undefined) {
+      if (enabled) {
+        elem.classList.add(clazz);
+      } else {
+        elem.classList.remove(clazz);
+      }
+    }
+    return elem && elem.classList.contains(clazz);
+  }
+
+  addClass(id: string, ...classes: string[]) {
+    const elem = this.findElem(id);
+    if (elem) {
+      elem.classList.add(...classes);
+    }
+    return false;
+  }
+
+  removeClass(id: string, ...classes: string[]) {
+    const elem = this.findElem(id);
+    if (elem) {
+      elem.classList.remove(...classes);
+    }
+    return false;
+  }
+
+  private findElem(id: string) {
+    return <SVGElement&SVGStylable>this.root.querySelector(`#${this.idPrefix}${id}`);
+  }
 
   private build(root: HTMLElement, svg: string) {
     root.innerHTML = svg;
+    this.species.ids.map((id) => {
+      const elem = this.findElem(id);
+      elem.classList.add(hiddenClass);
+      elem.style.fill = null;
+      elem.style.stroke = null;
+      elem.addEventListener('mouseenter', () => {
+        this.hover(id);
+      });
+      elem.addEventListener('mouseleave', () => {
+        this.hover(id, false);
+      });
+      elem.addEventListener('click', () => {
+        this.select(id);
+      });
+    });
   }
 }
 

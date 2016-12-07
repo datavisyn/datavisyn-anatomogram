@@ -29,4 +29,4 @@ Object.keys(species).forEach((k) => {
       list.push(new Species(`${k}.${kk}`, v[kk], idsMap[v[kk]]));
     });
   }
-})
+});

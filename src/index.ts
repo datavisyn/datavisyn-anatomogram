@@ -11,9 +11,22 @@ export {default as species} from './data';
 import * as defaultsDeep from 'lodash/defaultsDeep';
 
 export interface IAnatomogramOptions {
+  /**
+   * default css class for all tissues
+   */
   defaultClass?: string;
+  /**
+   * css class for the currently hovered tissue
+   */
   hoverClass?: string;
+  /**
+   * css class for selected tissues
+   */
   selectClass?: string;
+  /**
+   * on selection change listener
+   * @param selections current selection
+   */
   onSelectionChanged?(selections: string[]): void;
 }
 
@@ -22,13 +35,19 @@ function randomPrefix() {
 }
 
 function patchIds(svg: string, prefix: string) {
+  // prepend the given prefix on all ids
   return svg.replace(/id="(.*)"/gm, `id="${prefix}$1"`);
 }
 
-export type AnatomogramElem = SVGElement&SVGStylable;
+export type AnatomogramTissueElement = SVGElement&SVGStylable;
 
 export default class Anatomogram {
+
   private root: HTMLDivElement;
+  /**
+   * prefix to patch all ids to support multiple instances without naming conflict
+   * @type {string}
+   */
   private idPrefix = randomPrefix();
 
   private options: IAnatomogramOptions = {
@@ -38,7 +57,7 @@ export default class Anatomogram {
     onSelectionChanged: null
   };
 
-  private _elems: AnatomogramElem[];
+  private _tissues: AnatomogramTissueElement[];
 
   constructor(parent: HTMLElement, private species: Species, options?: IAnatomogramOptions) {
     this.options = defaultsDeep(options || {}, this.options);
@@ -49,56 +68,56 @@ export default class Anatomogram {
     this.species.load().then((svg) => this.build(this.root, patchIds(svg, this.idPrefix)));
   }
 
-  get ids() {
+  get tissues() {
     return this.species.ids;
   }
 
   get selections() {
-    return this._elems.filter((e) => e.classList.contains(this.options.selectClass)).map(Anatomogram.toId);
+    return this._tissues.filter((e) => e.classList.contains(this.options.selectClass)).map(Anatomogram.toId);
   }
 
   set selections(value: string[]) {
-    this._elems.forEach((elem) => {
-      const id = Anatomogram.toId(elem);
+    this._tissues.forEach((tissue) => {
+      const id = Anatomogram.toId(tissue);
       const selected = value.indexOf(id) >= 0;
       if (selected) {
-        elem.classList.add(this.options.selectClass);
+        tissue.classList.add(this.options.selectClass);
       } else {
-        elem.classList.remove(this.options.selectClass);
+        tissue.classList.remove(this.options.selectClass);
       }
-    })
+    });
   }
 
-  get elems() {
-    return this._elems.slice();
+  get tissueElements() {
+    return this._tissues.slice();
   }
 
-  private static toId(elem: AnatomogramElem) {
-    return elem.getAttribute('data-id');
+  private static toId(tissue: AnatomogramTissueElement) {
+    return tissue.getAttribute('data-tissue');
   }
 
-  private hover(id: string, hover = true) {
-    this.classed(id, this.options.hoverClass, hover);
-    console.log(id, hover);
+  private hover(tissue: string, hover = true) {
+    this.classed(tissue, this.options.hoverClass, hover);
+    console.log(tissue, hover);
   }
 
-  private select(id: string) {
-    this.classed(id, this.options.selectClass, true);
+  private select(tissue: string) {
+    this.classed(tissue, this.options.selectClass, true);
     if (typeof this.options.onSelectionChanged === 'function') {
       this.options.onSelectionChanged(this.selections);
     }
   }
 
-  style(id: string, attr: string, value?: string) {
-    const elem = this.findElem(id);
+  style(tissue: string, attr: string, value?: string) {
+    const elem = this.findElem(tissue);
     if (elem && value !== undefined) {
       elem.style[attr] = value;
     }
     return elem && elem.style[attr];
   }
 
-  classed(id: string, clazz: string, enabled?: boolean) {
-    const elem = this.findElem(id);
+  classed(tissue: string, clazz: string, enabled?: boolean) {
+    const elem = this.findElem(tissue);
     if (elem && enabled !== undefined) {
       if (enabled) {
         elem.classList.add(clazz);
@@ -109,45 +128,45 @@ export default class Anatomogram {
     return elem && elem.classList.contains(clazz);
   }
 
-  addClass(id: string, ...classes: string[]) {
-    const elem = this.findElem(id);
+  addClass(tissue: string, ...classes: string[]) {
+    const elem = this.findElem(tissue);
     if (elem) {
       elem.classList.add(...classes);
     }
     return false;
   }
 
-  removeClass(id: string, ...classes: string[]) {
-    const elem = this.findElem(id);
+  removeClass(tissue: string, ...classes: string[]) {
+    const elem = this.findElem(tissue);
     if (elem) {
       elem.classList.remove(...classes);
     }
     return false;
   }
 
-  private findElem(id: string) {
-    return <AnatomogramElem>this.root.querySelector(`#${this.idPrefix}${id}`);
+  private findElem(tissue: string) {
+    return <AnatomogramTissueElement>this.root.querySelector(`#${this.idPrefix}${tissue}`);
   }
 
   private build(root: HTMLElement, svg: string) {
     root.innerHTML = svg;
 
-    // map an initialize elems
-    this._elems = this.species.ids.map((id) => {
-      const elem = this.findElem(id);
+    // map an initialize tissues
+    this._tissues = this.species.ids.map((tissue) => {
+      const elem = this.findElem(tissue);
       elem.classList.add(this.options.defaultClass);
       // reset styles
       elem.style.fill = null;
       elem.style.stroke = null;
-      elem.setAttribute('data-id', id);
+      elem.setAttribute('data-tissue', tissue);
       elem.addEventListener('mouseenter', () => {
-        this.hover(id);
+        this.hover(tissue);
       });
       elem.addEventListener('mouseleave', () => {
-        this.hover(id, false);
+        this.hover(tissue, false);
       });
       elem.addEventListener('click', () => {
-        this.select(id);
+        this.select(tissue);
       });
       return elem;
     });

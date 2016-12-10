@@ -8,15 +8,26 @@ import * as species from './resources/json/svgsForSpecies.json';
 import * as idsMap from './resources/json/idsForSvgs.json';
 
 export class Species {
-  constructor(public name: string, private file: string, public ids: string[]) {
+  readonly name: string;
+  readonly ids: string[];
 
+  constructor(name: string, private file: string, ids: string[]) {
+    this.name = name;
+    this.ids = ids;
   }
 
+  /**
+   * load the underlying svg data
+   */
   load(): Promise<string> {
     return System.import(`raw-loader!./resources/svg/${this.file}`);
   }
 }
 
+/**
+ * list of all known species
+ * @type {Array}
+ */
 export const list : Species[]= [];
 export default list;
 

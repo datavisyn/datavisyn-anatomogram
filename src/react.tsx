@@ -24,7 +24,8 @@ export default class Anatomogram extends React.Component<IAnatomogramProps,{}> {
     species: React.PropTypes.string.isRequired,
     defaultClass: React.PropTypes.string,
     hoverClass: React.PropTypes.string,
-    selectClass: React.PropTypes.string
+    selectClass: React.PropTypes.string,
+    onSelectionChanged: React.PropTypes.func
   };
 
   static defaultProps = {};

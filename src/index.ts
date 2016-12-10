@@ -14,6 +14,7 @@ export interface IAnatomogramOptions {
   defaultClass?: string;
   hoverClass?: string;
   selectClass?: string;
+  onSelectionChanged?(selections: string[]): void;
 }
 
 function randomPrefix() {
@@ -24,6 +25,8 @@ function patchIds(svg: string, prefix: string) {
   return svg.replace(/id="(.*)"/gm, `id="${prefix}$1"`);
 }
 
+export type AnatomogramElem = SVGElement&SVGStylable;
+
 export default class Anatomogram {
   private root: HTMLDivElement;
   private idPrefix = randomPrefix();
@@ -31,8 +34,11 @@ export default class Anatomogram {
   private options: IAnatomogramOptions = {
     hoverClass: hoverClass,
     selectClass: selectClass,
-    defaultClass: hiddenClass
+    defaultClass: hiddenClass,
+    onSelectionChanged: null
   };
+
+  private _elems: AnatomogramElem[];
 
   constructor(parent: HTMLElement, private species: Species, options?: IAnatomogramOptions) {
     this.options = defaultsDeep(options || {}, this.options);
@@ -43,6 +49,34 @@ export default class Anatomogram {
     this.species.load().then((svg) => this.build(this.root, patchIds(svg, this.idPrefix)));
   }
 
+  get ids() {
+    return this.species.ids;
+  }
+
+  get selections() {
+    return this._elems.filter((e) => e.classList.contains(this.options.selectClass)).map(Anatomogram.toId);
+  }
+
+  set selections(value: string[]) {
+    this._elems.forEach((elem) => {
+      const id = Anatomogram.toId(elem);
+      const selected = value.indexOf(id) >= 0;
+      if (selected) {
+        elem.classList.add(this.options.selectClass);
+      } else {
+        elem.classList.remove(this.options.selectClass);
+      }
+    })
+  }
+
+  get elems() {
+    return this._elems.slice();
+  }
+
+  private static toId(elem: AnatomogramElem) {
+    return elem.getAttribute('data-id');
+  }
+
   private hover(id: string, hover = true) {
     this.classed(id, this.options.hoverClass, hover);
     console.log(id, hover);
@@ -50,6 +84,9 @@ export default class Anatomogram {
 
   private select(id: string) {
     this.classed(id, this.options.selectClass, true);
+    if (typeof this.options.onSelectionChanged === 'function') {
+      this.options.onSelectionChanged(this.selections);
+    }
   }
 
   style(id: string, attr: string, value?: string) {
@@ -89,16 +126,20 @@ export default class Anatomogram {
   }
 
   private findElem(id: string) {
-    return <SVGElement&SVGStylable>this.root.querySelector(`#${this.idPrefix}${id}`);
+    return <AnatomogramElem>this.root.querySelector(`#${this.idPrefix}${id}`);
   }
 
   private build(root: HTMLElement, svg: string) {
     root.innerHTML = svg;
-    this.species.ids.map((id) => {
+
+    // map an initialize elems
+    this._elems = this.species.ids.map((id) => {
       const elem = this.findElem(id);
       elem.classList.add(this.options.defaultClass);
+      // reset styles
       elem.style.fill = null;
       elem.style.stroke = null;
+      elem.setAttribute('data-id', id);
       elem.addEventListener('mouseenter', () => {
         this.hover(id);
       });
@@ -108,6 +149,7 @@ export default class Anatomogram {
       elem.addEventListener('click', () => {
         this.select(id);
       });
+      return elem;
     });
   }
 }

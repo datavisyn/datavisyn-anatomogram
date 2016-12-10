@@ -5,22 +5,11 @@
   <title>Anatomogram Test</title>
 
   <style>
-    .datavisyn-anatomogram {
+    .datavisyn-anatomogram svg {
       width: 520px;
       height: 500px;
     }
-    .datavisyn-anatomogram .datavisyn-selected {
-      fill: red !important;
-      opacity: 1;
-    }
-    .datavisyn-anatomogram .datavisyn-hovered {
-      fill: orange !important;
-      opacity: 0.5;
-    }
-    .datavisyn-anatomogram .datavisyn-default {
-      fill: gray;
-      stroke: none;
-    }
+
   </style>
 </head>
 <body>
@@ -31,22 +20,40 @@
 <select id="speciesSelector">
 
 </select>
+<button id="random">Random Values</button>
 <section>
 </section>
+<pre id="selection">
+
+</pre>
 <script src="./anatomogram.js"></script>
 <script>
   (function() {
     const l = datavisyn.anatomogram.species;
     const s = document.getElementById('speciesSelector');
-    s.innerHTML = l.map((l) => `<option value="${l.name}">${l.name}</option>`);
+    var v;
+    s.innerHTML = `<option></option>` + l.map((l) => `<option value="${l.name}">${l.name}</option>`).join('');
     s.addEventListener('change', function() {
-      const i = this.selectedIndex;
+      const i = this.selectedIndex-1;
+      if (i <= 0) {
+        return;
+      }
       const parent = document.querySelector('section');
       while(parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
-      const v = new datavisyn.anatomogram.create(parent, l[i]);
-
+      v = new datavisyn.anatomogram.create(parent, l[i], {
+        onSelectionChanged: (selection) => document.querySelector('pre').innerHTML = selection.toString()
+      });
+    });
+    document.querySelector('#random').addEventListener('click', () => {
+      if(!v) {
+        return;
+      }
+      v.tissues.forEach((tissue) => {
+        const value = Math.floor(Math.random()*255);
+        v.style(tissue, 'fill', `rgba(0,0,${value}, 0.5)`);
+      });
     });
    })()
 </script>

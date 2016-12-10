@@ -98,11 +98,10 @@ export default class Anatomogram {
 
   private hover(tissue: string, hover = true) {
     this.classed(tissue, this.options.hoverClass, hover);
-    console.log(tissue, hover);
   }
 
   private select(tissue: string) {
-    this.classed(tissue, this.options.selectClass, true);
+    this.classed(tissue, this.options.selectClass, !this.classed(tissue, this.options.selectClass));
     if (typeof this.options.onSelectionChanged === 'function') {
       this.options.onSelectionChanged(this.selections);
     }
@@ -150,7 +149,11 @@ export default class Anatomogram {
 
   private build(root: HTMLElement, svg: string) {
     root.innerHTML = svg;
-
+    const svgElem = <SVGSVGElement>this.root.querySelector('svg');
+    // set view box for simpler scaling and aspect ratio preservation
+    if (!svgElem.hasAttribute('viewBox')) {
+      svgElem.setAttribute('viewBox', `0 0 ${parseFloat(svgElem.getAttribute('width'))} ${parseFloat(svgElem.getAttribute('height'))}`);
+    }
     // map an initialize tissues
     this._tissues = this.species.ids.map((tissue) => {
       const elem = this.findElem(tissue);

@@ -4,7 +4,15 @@
 
 .datavisyn-anatomogram {
   .datavisyn-default {
-    fill: transparent;
+    fill: rgba(0, 0, 0, 0.5);
     stroke: none;
+  }
+  .datavisyn-selected {
+    fill: orange;
+    opacity: 0.5;
+  }
+  .datavisyn-hovered {
+    fill: orange;
+    opacity: 1;
   }
 }

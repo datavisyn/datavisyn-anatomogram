@@ -17,7 +17,7 @@ module.exports = function (env) {
     },
     output: {
       path: path.resolve(__dirname, 'build'),
-      publicPath: './',
+      publicPath: '',
       filename: '[name].js',
       libraryTarget: 'umd',
       library: ['datavisyn', 'anatomogram']

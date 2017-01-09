@@ -23,7 +23,7 @@
     "url": "https://github.com/datavisyn/datavisyn-anatomogram.git"
   },
   "main": "build/anatomogram.js",
-  "typings": "typings/index.d.ts",
+  "typings": "build/typings/index.d.ts",
   "files": [
     "src",
     "build",

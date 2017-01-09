@@ -34,7 +34,7 @@ module.exports = function (env) {
         test: /\.(png|jpg)$/,
         loader: 'url-loader',
         query: {
-          limit: 10000, //inline <= 10kb
+          limit: 10000 //inline <= 10kb
         }
       }]
     },

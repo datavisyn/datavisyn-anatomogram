@@ -8,7 +8,7 @@ import './style.scss';
 import {Species} from './data';
 import {cssprefix, hoverClass, selectClass, hiddenClass} from './constants';
 export {default as species} from './data';
-import * as defaultsDeep from 'lodash/defaultsDeep';
+import {defaultsDeep} from 'lodash';
 
 export interface IAnatomogramOptions {
   /**
@@ -51,8 +51,8 @@ export default class Anatomogram {
   private idPrefix = randomPrefix();
 
   private options: IAnatomogramOptions = {
-    hoverClass: hoverClass,
-    selectClass: selectClass,
+    hoverClass,
+    selectClass,
     defaultClass: hiddenClass,
     onSelectionChanged: null
   };

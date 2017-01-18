@@ -15,8 +15,8 @@
     fill: orange;
     opacity: 1;
   }
-}
 
-a[id*="_ccLogo"] {
-  transform: translate(20%, 90%);
+  a[id*="_ccLogo"] {
+    transform: translate(50%, 90%) scale(.7);
+  }
 }

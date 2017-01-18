@@ -16,3 +16,7 @@
     opacity: 1;
   }
 }
+
+a[id*="_ccLogo"] {
+  transform: translate(20%, 90%);
+}

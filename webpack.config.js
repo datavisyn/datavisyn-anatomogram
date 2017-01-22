@@ -23,20 +23,34 @@ module.exports = function (env) {
       library: ['datavisyn', 'anatomogram']
     },
     module: {
-      loaders: [{
-        test: /\.tsx?$/,
-        loader: 'awesome-typescript-loader'
-      }, {
-        test: /\.scss$/,
-        loader: 'style-loader!css-loader!sass-loader'
-      },{test: /\.json$/, loader: 'json-loader'},
-      {
-        test: /\.(png|jpg)$/,
-        loader: 'url-loader',
-        query: {
-          limit: 10000 //inline <= 10kb
-        }
-      }]
+      loaders: [
+        {test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader'},
+        {test: /\.tsx?$/, loader: 'awesome-typescript-loader'},
+        {test: /\.json$/, loader: 'json-loader'},
+        {
+          test: /\.(png|jpg)$/,
+          loader: 'url-loader',
+          query: {
+            limit: 10000 //inline <= 10kb
+          }
+        },
+        {
+          test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          loader: 'url-loader',
+          query: {
+            limit: 10000, //inline <= 10kb
+            mimetype: 'application/font-woff'
+          }
+        },
+        {
+          test: /\.svg(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          loader: 'url-loader',
+          query: {
+            limit: 10000, //inline <= 10kb
+            mimetype: 'image/svg+xml'
+          }
+        },
+        {test: /\.(ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file-loader'}]
     },
     resolve: {
       extensions: ['.webpack.js', '.web.js', '.js', '.ts', '.tsx'],
@@ -53,10 +67,10 @@ module.exports = function (env) {
         raw: true
       }),
       new webpack.DefinePlugin({
-       'process.env': {
-         'NODE_ENV': JSON.stringify(isProduction ? 'production': 'development')
-       }
-   })
+        'process.env': {
+          'NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development')
+        }
+      })
     ],
     devServer: {
       contentBase: path.resolve(__dirname, 'build')

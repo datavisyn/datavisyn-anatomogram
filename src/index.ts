@@ -9,6 +9,7 @@ import {Species} from './data';
 import {cssprefix, hoverClass, selectClass, hiddenClass} from './constants';
 export {default as species} from './data';
 import {defaultsDeep} from 'lodash';
+import {patchIds, randomPrefix} from './internal';
 
 export interface IAnatomogramOptions {
   /**
@@ -30,15 +31,6 @@ export interface IAnatomogramOptions {
   onSelectionChanged?(selections: string[]): void;
 }
 
-function randomPrefix() {
-  return `r${Math.random().toString(36).slice(-8)}_`;
-}
-
-function patchIds(svg: string, prefix: string) {
-  // prepend the given prefix on all ids
-  return svg.replace(/id="(.*)"/gm, `id="${prefix}$1"`);
-}
-
 export type AnatomogramTissueElement = SVGElement&SVGStylable;
 
 export default class Anatomogram {
@@ -48,7 +40,7 @@ export default class Anatomogram {
    * prefix to patch all ids to support multiple instances without naming conflict
    * @type {string}
    */
-  private idPrefix = randomPrefix();
+  private readonly idPrefix = randomPrefix();
 
   private options: IAnatomogramOptions = {
     hoverClass,

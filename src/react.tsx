@@ -4,6 +4,8 @@
  * created: 2016-12-07T13:38:55.615Z
  */
 
+import './style.scss';
+
 import * as React from 'react';
 import {IAnatomogramOptions, species, AnatomogramTissueElement} from './index';
 export {species} from './index';

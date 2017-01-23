@@ -13,7 +13,7 @@ import {patchIds, randomPrefix} from './internal';
 export interface IAnatomogramProps extends IAnatomogramOptions {
   species: string;
 
-  selection: string[];
+  selection?: string[];
 
   /**
    * default css class for all tissues
@@ -61,7 +61,7 @@ export default class Anatomogram extends React.Component<IAnatomogramProps,{load
     super(props, context);
     this.state = {
       loaded: false,
-      selection: props.selection
+      selection: props.selection || []
     };
 
     this.load();
@@ -99,9 +99,11 @@ export default class Anatomogram extends React.Component<IAnatomogramProps,{load
   render() {
     if (this.state.loaded) {
       this.tissues.forEach((t) => {
-        t.className = this.props.defaultClass;
-        if (this.state.selection.indexOf(t.getAttribute('data-tissue')) >= 0) {
+        if (this.state.selection && this.state.selection.indexOf(t.getAttribute('data-tissue')) >= 0) {
           t.classList.add(this.props.selectClass);
+        } else {
+          t.classList.remove(this.props.selectClass);
+          t.classList.add(this.props.defaultClass);
         }
       });
       const serializer = new XMLSerializer();
@@ -116,11 +118,12 @@ export default class Anatomogram extends React.Component<IAnatomogramProps,{load
   private toggleSelection(tissue: string) {
     const newSelection = this.state.selection.slice();
     const old = newSelection.indexOf(tissue);
-    if (old) { //deselect again
+    if (old !== -1) { //deselect again
       newSelection.splice(old, 1);
     } else {
       newSelection.push(tissue);
     }
+
     if (this.props.onSelectionChanged) {
       this.props.onSelectionChanged(newSelection);
     }
@@ -136,7 +139,6 @@ export default class Anatomogram extends React.Component<IAnatomogramProps,{load
     const tissue = elem.getAttribute('data-tissue');
     if (tissue) {
       this.toggleSelection(tissue);
-      elem.classList.toggle(this.props.selectClass);
     }
     return false;
   }

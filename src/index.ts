@@ -160,14 +160,14 @@ export default class Anatomogram {
       elem.style.stroke = null;
       elem.setAttribute('data-tissue', tissue);
 
-      if(this.options.tissueColorMap && (this.options.tissueColorMap[tissue] !== undefined)) {
-        const defaultColor = this.options.tissueColorMap[tissue];
+      if(this.options.tissueColorMap && this.options.tissueColorMap[tissue] !== undefined) {
+        const color = this.options.tissueColorMap[tissue];
 
-        if(!isNaN(parseFloat(defaultColor)) && typeof parseFloat(defaultColor) === 'number') {
-          const grayScale: number = Math.floor(parseFloat(defaultColor) * 255);
+        if(!isNaN(parseFloat(color)) && typeof parseFloat(color) === 'number') {
+          const grayScale: number = Math.floor(parseFloat(color) * 255);
           elem.style.fill = `rgb(${grayScale}, ${grayScale}, ${grayScale})`;
         } else {
-          elem.style.fill = defaultColor;
+          elem.style.fill = color;
         }
       }
 

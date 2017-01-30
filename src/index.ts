@@ -25,6 +25,10 @@ export interface IAnatomogramOptions {
    */
   selectClass?: string;
   /**
+   * map to pass a color for each tissue
+   */
+  tissueColorMap?: {property: string|number};
+  /**
    * on selection change listener
    * @param selections current selection
    */
@@ -46,6 +50,7 @@ export default class Anatomogram {
     hoverClass,
     selectClass,
     defaultClass: hiddenClass,
+    tissueColorMap: null,
     onSelectionChanged: null
   };
 
@@ -154,6 +159,18 @@ export default class Anatomogram {
       elem.style.fill = null;
       elem.style.stroke = null;
       elem.setAttribute('data-tissue', tissue);
+
+      if(this.options.tissueColorMap && this.options.tissueColorMap[tissue] !== undefined) {
+        const color = this.options.tissueColorMap[tissue];
+
+        if(!isNaN(parseFloat(color)) && typeof parseFloat(color) === 'number') {
+          const grayScale: number = Math.floor(parseFloat(color) * 255);
+          elem.style.fill = `rgb(${grayScale}, ${grayScale}, ${grayScale})`;
+        } else {
+          elem.style.fill = color;
+        }
+      }
+
       elem.addEventListener('mouseenter', () => {
         this.hover(tissue);
       });

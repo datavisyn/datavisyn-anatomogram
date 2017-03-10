@@ -42,7 +42,7 @@
       while(parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
-      v = new datavisyn.anatomogram.create(parent, l[i], {
+      v = new datavisyn.anatomogram.create(parent, l[i], datavisyn.anatomogram.fetchImageLoader('../resources'), {
         onSelectionChanged: (selection) => document.querySelector('pre').innerHTML = selection.toString()
       });
     });

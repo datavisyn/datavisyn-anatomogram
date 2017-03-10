@@ -37,6 +37,10 @@ export interface IAnatomogramOptions {
 
 export type AnatomogramTissueElement = SVGElement&SVGStylable;
 
+export interface IImageLoader {
+  (fileName: string): Promise<string>;
+}
+
 export default class Anatomogram {
 
   private root: HTMLDivElement;
@@ -56,13 +60,13 @@ export default class Anatomogram {
 
   private _tissues: AnatomogramTissueElement[];
 
-  constructor(parent: HTMLElement, private species: Species, options?: IAnatomogramOptions) {
+  constructor(parent: HTMLElement, private readonly species: Species, private readonly imageLoader: IImageLoader, options?: IAnatomogramOptions) {
     this.options = defaultsDeep(options || {}, this.options);
     this.root = parent.ownerDocument.createElement('div');
     this.root.classList.add(cssprefix);
     parent.appendChild(this.root);
     //this.shadow = (<any>this.root).createShadowRoot();
-    this.species.load().then((svg) => this.build(this.root, patchIds(svg, this.idPrefix)));
+    this.imageLoader(this.species.fileName).then((svg) => this.build(this.root, patchIds(svg, this.idPrefix)));
   }
 
   get tissues() {
@@ -185,6 +189,14 @@ export default class Anatomogram {
   }
 }
 
-export function create(parent: HTMLElement, species: Species, options?: IAnatomogramOptions) {
-  return new Anatomogram(parent, species, options);
+export function fetchImageLoader(baseDir: string) {
+  return (fileName: string) => {
+    return (<any>self).fetch(`${baseDir}/${fileName}`, {
+      credentials: 'same-origin'
+    }).then((r) => r.text());
+  };
+}
+
+export function create(parent: HTMLElement, species: Species, imageLoader: IImageLoader, options?: IAnatomogramOptions) {
+  return new Anatomogram(parent, species, imageLoader, options);
 }

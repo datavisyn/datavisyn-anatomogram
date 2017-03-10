@@ -28,7 +28,8 @@
     "src",
     "build",
     "resources",
-    "typings"
+    "typings",
+	"LICENSE_GXA_ANATOMOGRAM"
   ],
   "scripts": {
     "compile": "tsc",

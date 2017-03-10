@@ -27,6 +27,7 @@
   "files": [
     "src",
     "build",
+    "resources",
     "typings"
   ],
   "scripts": {

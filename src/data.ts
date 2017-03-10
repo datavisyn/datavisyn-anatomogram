@@ -16,13 +16,9 @@ export class Species {
     this.ids = ids;
   }
 
-  /**
-   * load the underlying svg data
-   */
-  load(): Promise<string> {
+  get fileName() {
     const basename = this.file.substring(0, this.file.lastIndexOf('.'));
-    //!! to a request will disable configured loaders
-    return System.import(`!!raw-loader!./resources/svg/${basename}.svg`);
+    return `${basename}.svg`;
   }
 }
 

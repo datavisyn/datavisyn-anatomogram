@@ -1,6 +1,6 @@
 {
   "name": "datavisyn-anatomogram",
-  "version": "0.0.2",
+  "version": "0.0.3-SNAPSHOT",
   "description": "body map renderer",
   "homepage": "https://phovea.caleydo.org",
   "author": {

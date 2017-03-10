@@ -189,6 +189,14 @@ export default class Anatomogram {
   }
 }
 
-export function create(parent: HTMLElement, species: Species, options?: IAnatomogramOptions) {
-  return new Anatomogram(parent, species, options);
+export function fetchImageLoader(baseDir: string) {
+  return (fileName: string) => {
+    return (<any>self).fetch(`${baseDir}/${fileName}`, {
+      credentials: 'same-origin'
+    }).then((r) => r.text());
+  };
+}
+
+export function create(parent: HTMLElement, species: Species, imageLoader: IImageLoader, options?: IAnatomogramOptions) {
+  return new Anatomogram(parent, species, imageLoader, options);
 }

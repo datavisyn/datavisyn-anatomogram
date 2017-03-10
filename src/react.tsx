@@ -7,13 +7,14 @@
 import './style.scss';
 
 import * as React from 'react';
-import {IAnatomogramOptions, species, AnatomogramTissueElement} from './index';
-export {species} from './index';
+import {IAnatomogramOptions, species, AnatomogramTissueElement, IImageLoader} from './index';
+export {species, fetchImageLoader} from './index';
 import {Species} from './data';
 import {patchIds, randomPrefix} from './internal';
 
 export interface IAnatomogramProps extends IAnatomogramOptions {
   species: string;
+  imageLoader: IImageLoader;
 
   selection?: string[];
 
@@ -42,6 +43,7 @@ function resolveSpecies(s: string) {
 export default class Anatomogram extends React.Component<IAnatomogramProps,{loaded: boolean, selection: string[]}> {
   static propTypes = {
     species: React.PropTypes.string.isRequired,
+    imageLoader: React.PropTypes.func.isRequired,
     defaultClass: React.PropTypes.string,
     hoverClass: React.PropTypes.string,
     selectClass: React.PropTypes.string,
@@ -71,7 +73,7 @@ export default class Anatomogram extends React.Component<IAnatomogramProps,{load
 
   private load() {
     const species = resolveSpecies(this.props.species);
-    species.load().then((svg) => {
+    this.props.imageLoader(species.fileName).then((svg) => {
       const parser = new DOMParser();
       this.svg = parser.parseFromString(patchIds(svg, this.idPrefix), 'image/svg+xml');
       this.init(this.svg.rootElement, species);

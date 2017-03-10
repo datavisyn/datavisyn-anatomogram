@@ -58,8 +58,8 @@ module.exports = function (env) {
       modules: [path.resolve(__dirname, 'src'), 'node_modules', path.resolve(__dirname, '../')]
     },
     externals: {
-      react: 'React',
-      'react-dom': 'ReactDOM'
+      react: { amd: 'react', root: 'React', commonjs: 'react', commonjs2: 'react' },
+      'react-dom': { amd: 'react-dom', root: 'ReactDOM', commonjs: 'react-dom', commonjs2: 'react-dom' }
     },
     plugins: [
       new webpack.BannerPlugin({
